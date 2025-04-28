@@ -35,7 +35,7 @@ final class Course extends Model
     }
 
     /**
-     * Define the relationship: A Course has many Modules.
+     * A Course has many Modules.
      * Orders modules by the 'order' column.
      */
     public function modules(): HasMany

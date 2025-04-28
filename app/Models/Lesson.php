@@ -8,6 +8,7 @@ use Database\Factories\LessonFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 final class Lesson extends Model
 {
@@ -36,5 +37,11 @@ final class Lesson extends Model
     public function module(): BelongsTo
     {
         return $this->belongsTo(Module::class);
+    }
+
+    // A Lesson can be covered by many Quizzes
+    public function quizzes(): BelongsToMany
+    {
+        return $this->belongsToMany(Quiz::class, 'lesson_quiz');
     }
 }
