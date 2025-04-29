@@ -30,8 +30,12 @@ final class QuizSeeder extends Seeder
             // Associate this quiz with the lessons it covers
             $lesson1 = Lesson::where('slug', 'what-is-javascript')->first();
             $lesson2 = Lesson::where('slug', 'setting-up-environment')->first();
-            if ($lesson1) $introQuiz->lessons()->attach($lesson1->id);
-            if ($lesson2) $introQuiz->lessons()->attach($lesson2->id);
+            if ($lesson1) {
+                $introQuiz->lessons()->attach($lesson1->id);
+            }
+            if ($lesson2) {
+                $introQuiz->lessons()->attach($lesson2->id);
+            }
         }
 
         if ($varsModule) {
@@ -43,8 +47,12 @@ final class QuizSeeder extends Seeder
             ]);
             $lesson3 = Lesson::where('slug', 'declaring-variables')->first();
             $lesson4 = Lesson::where('slug', 'primitive-data-types')->first();
-            if ($lesson3) $varsQuiz->lessons()->attach($lesson3->id);
-            if ($lesson4) $varsQuiz->lessons()->attach($lesson4->id);
+            if ($lesson3) {
+                $varsQuiz->lessons()->attach($lesson3->id);
+            }
+            if ($lesson4) {
+                $varsQuiz->lessons()->attach($lesson4->id);
+            }
         }
     }
 }
