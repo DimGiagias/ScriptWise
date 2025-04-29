@@ -37,4 +37,10 @@ final class Module extends Model
     {
         return $this->hasMany(Lesson::class)->orderBy('order');
     }
+
+    // A Module can have many Quizzes
+    public function quizzes(): HasMany
+    {
+        return $this->hasMany(Quiz::class)->orderBy('order');
+    }
 }
