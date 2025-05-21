@@ -78,10 +78,7 @@ const successMessage = computed(() => page.props.flash?.success);
                         </div>
                     </div>
                 </div>
-
             </div>
-        </div>
-    </div>
 </template>
 
 <style scoped>
