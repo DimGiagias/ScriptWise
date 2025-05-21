@@ -26,9 +26,7 @@ final class LessonController extends Controller
         }
 
         return Inertia::render('lessons/Show', [
-            'lesson' => $lesson->only(
-                'id', 'title', 'slug', 'content'
-            ),
+            'lesson' => $lesson,
             'course' => $course->only('id', 'title', 'slug'),
         ]);
     }
