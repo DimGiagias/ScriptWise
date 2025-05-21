@@ -37,6 +37,18 @@ final class User extends Authenticatable
         'remember_token',
     ];
 
+    // A User has many Quiz Attempts
+    public function quizAttempts(): HasMany
+    {
+        return $this->hasMany(QuizAttempt::class);
+    }
+
+    // User has many progress records.
+    public function progress(): HasMany
+    {
+        return $this->hasMany(UserProgress::class);
+    }
+
     /**
      * Get the attributes that should be cast.
      *
@@ -48,17 +60,5 @@ final class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
-    }
-
-    // A User has many Quiz Attempts
-    public function quizAttempts(): HasMany
-    {
-        return $this->hasMany(QuizAttempt::class);
-    }
-
-    // User has many progress records.
-    public function progress(): HasMany
-    {
-        return $this->hasMany(UserProgress::class);
     }
 }

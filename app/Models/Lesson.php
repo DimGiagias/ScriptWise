@@ -24,7 +24,7 @@ final class Lesson extends Model
         'order',
     ];
 
-    //Add 'is_completed' attribute dynamically for a logged-in user
+    // Add 'is_completed' attribute dynamically for a logged-in user
     protected $appends = ['is_completed'];
 
     /**
@@ -52,5 +52,4 @@ final class Lesson extends Model
     {
         return $this->hasMany(UserProgress::class);
     }
-
 }

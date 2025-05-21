@@ -1,18 +1,20 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers;
 
 use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 use Inertia\Response;
 
-class DashboardController extends Controller
+final class DashboardController extends Controller
 {
     public function index(): Response
     {
         $user = Auth::user();
 
-        if (!$user) {
+        if (! $user) {
             return Inertia::render('Dashboard', ['quizAttempts' => []]);
         }
 
