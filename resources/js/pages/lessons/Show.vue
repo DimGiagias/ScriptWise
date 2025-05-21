@@ -1,15 +1,23 @@
 <script setup lang="ts">
-import { Head, Link } from '@inertiajs/vue3';
+import { Head, Link, usePage } from '@inertiajs/vue3';
+import { computed } from 'vue';
 
 defineProps({
     lesson: Object,
     course: Object,
 });
 
+const page = usePage();
+const successMessage = computed(() => page.props.flash?.success);
+
 </script>
 
 <template>
     <Head :title="lesson.title" />
+
+    <div v-if="successMessage" class="mb-4 p-4 bg-green-100 border border-green-400 text-green-700 rounded">
+        {{ successMessage }}
+    </div>
 
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
@@ -26,6 +34,27 @@ defineProps({
                         <h2 class="text-3xl font-semibold mb-4">{{ lesson.title }}</h2>
 
                         <div class="prose dark:prose-invert max-w-none" v-html="lesson.content"></div>
+
+                        <div class="mt-8 border-t pt-6">
+                            <!-- Show completed message -->
+                            <div v-if="lesson.is_completed" class="flex items-center p-3 bg-green-100 dark:bg-green-900/30 border border-green-300 dark:border-green-700 rounded-md text-green-700 dark:text-green-300 font-semibold">
+                                <svg class="w-6 h-6 mr-2 fill-current" viewBox="0 0 20 20"><path d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"></path></svg>
+                                <span>Lesson Completed!</span>
+                            </div>
+                            <!-- Show button if not completed -->
+                            <Link v-else
+                                  :href="route('lessons.complete', { lesson: lesson.id })"
+                                  method="post"
+                                  as="button"
+                                  type="button"
+                                  preserve-scroll
+                                  class="inline-flex items-center px-4 py-2 bg-blue-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-blue-700 active:bg-blue-800 focus:outline-none focus:border-blue-900 focus:ring ring-blue-300 disabled:opacity-25 transition ease-in-out duration-150"
+                            >
+                                Mark as Complete
+                            </Link>
+                        </div>
+                    </div>
+                </div>
 
                         <div class="mt-8 border-t pt-4">
                             <button disabled class="bg-gray-400 text-white font-bold py-2 px-4 rounded opacity-50 cursor-not-allowed">
