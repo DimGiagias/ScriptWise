@@ -14,6 +14,7 @@ const scoreColorClass = computed(() => {
     if (props.attempt.score >= 50) return 'text-yellow-600 dark:text-yellow-400';
     return 'text-red-600 dark:text-red-400';
 });
+
 </script>
 
 <template>
@@ -48,9 +49,7 @@ const scoreColorClass = computed(() => {
 
                     <!-- Back/Next Links -->
                     <div class="mt-8 border-t pt-6 flex justify-between">
-                        <!-- Link back to course/module? Need data for this -->
                         <Link v-if="false" href="#" class="text-blue-600 hover:underline dark:text-blue-400">« Back to Module</Link>
-                        <!-- Link to next module/course overview? -->
                         <Link :href="route('dashboard')" class="text-blue-600 hover:underline dark:text-blue-400">Go to Dashboard »</Link>
                     </div>
 

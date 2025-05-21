@@ -19,7 +19,6 @@ final class QuestionSeeder extends Seeder
         $introQuiz = Quiz::where('title', 'Quiz: Introduction Concepts')->first();
         $varsQuiz = Quiz::where('title', 'Quiz: Variables')->first();
 
-        // Get lessons to link questions back for review suggestions
         $lessonWhatIsJs = Lesson::where('slug', 'what-is-javascript')->first();
         $lessonSetup = Lesson::where('slug', 'setting-up-environment')->first();
         $lessonDeclare = Lesson::where('slug', 'declaring-variables')->first();
@@ -28,16 +27,16 @@ final class QuestionSeeder extends Seeder
         if ($introQuiz) {
             Question::create([
                 'quiz_id' => $introQuiz->id,
-                'lesson_id' => $lessonWhatIsJs?->id, // Link to relevant lesson
+                'lesson_id' => $lessonWhatIsJs?->id,
                 'type' => 'multiple_choice',
                 'text' => 'What is JavaScript primarily used for?',
-                'options' => json_encode([ // Encode options as JSON string
+                'options' => json_encode([
                     ['id' => 'a', 'text' => 'Styling web pages'],
                     ['id' => 'b', 'text' => 'Creating dynamic web content'],
                     ['id' => 'c', 'text' => 'Managing databases'],
                     ['id' => 'd', 'text' => 'Server-side logic only'],
                 ]),
-                'correct_answer' => 'b', // The ID of the correct option
+                'correct_answer' => 'b',
                 'explanation' => 'JavaScript runs in the browser to make web pages interactive.',
                 'order' => 1,
             ]);

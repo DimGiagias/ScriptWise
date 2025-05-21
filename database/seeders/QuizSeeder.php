@@ -24,10 +24,9 @@ final class QuizSeeder extends Seeder
                 'module_id' => $introModule->id,
                 'title' => 'Quiz: Introduction Concepts',
                 'description' => 'Test your understanding of the basics.',
-                'order' => 1, // Order of quiz within the module
+                'order' => 1,
             ]);
 
-            // Associate this quiz with the lessons it covers
             $lesson1 = Lesson::where('slug', 'what-is-javascript')->first();
             $lesson2 = Lesson::where('slug', 'setting-up-environment')->first();
             if ($lesson1) {

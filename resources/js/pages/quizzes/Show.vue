@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { Head, Link, useForm } from '@inertiajs/vue3';
-import { ref, computed } from 'vue';
+import { Head, useForm } from '@inertiajs/vue3';
+import { computed } from 'vue';
 
 const props = defineProps({
     quiz: Object,
@@ -57,7 +57,7 @@ const allAnswered = computed(() => {
                                     {{ index + 1 }}. {{ question.text }}
                                 </p>
 
-                                <!-- Render Multiple Choice Options -->
+                                <!-- Multiple Choice Options -->
                                 <div v-if="question.type === 'multiple_choice'" class="space-y-2 ml-4">
                                     <label v-for="option in question.options" :key="option.id"
                                            class="flex items-center p-3 border rounded-md hover:bg-gray-50 dark:hover:bg-gray-700 transition cursor-pointer"
