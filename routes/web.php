@@ -20,7 +20,7 @@ Route::middleware(['auth', 'verified'])->group(function (): void {
     Route::get('/quizzes/{quiz}', [QuizController::class, 'show'])->name('quizzes.show');
     Route::post('/quizzes/{quiz}/submit', [QuizController::class, 'submit'])->name('quizzes.submit');
 
-    Route::post('/lessons/{lesson}/complete', [UserProgressController::class, 'store'])->name('lessons.complete');
+    Route::post('/lessons/{lesson:id}/complete', [UserProgressController::class, 'store'])->name('lessons.complete');
 
 });
 
