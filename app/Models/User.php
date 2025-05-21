@@ -43,6 +43,12 @@ final class User extends Authenticatable
         return $this->hasMany(QuizAttempt::class);
     }
 
+    // User has many progress records.
+    public function progress(): HasMany
+    {
+        return $this->hasMany(UserProgress::class);
+    }
+
     /**
      * Get the attributes that should be cast.
      *

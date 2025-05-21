@@ -31,7 +31,10 @@ defineProps({
                                     <Link
                                         :href="route('lessons.show', { course: course.slug, lesson: lesson.slug })"
                                         class="text-blue-600 hover:underline dark:text-blue-400"
+                                        :class="{ 'font-semibold text-gray-800 dark:text-gray-200': lesson.is_completed }"
                                     >
+                                        <!-- Add a checkmark if completed -->
+                                        <span v-if="lesson.is_completed" class="text-green-500 mr-1">✓</span>
                                         {{ lesson.title }}
                                     </Link>
                                 </li>
