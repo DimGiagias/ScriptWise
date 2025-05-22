@@ -17,13 +17,15 @@ return new class extends Migration
             $table->id();
             $table->foreignId('quiz_id')->constrained()->onDelete('cascade');
             $table->foreignId('lesson_id')->nullable()->constrained()->onDelete('set null');
-            $table->enum('type', ['multiple_choice'])->default('multiple_choice');
+            $table->enum('type', ['multiple_choice', 'true_false', 'fill_blank'])->default('multiple_choice');
             $table->text('text')->comment('The question text');
-            $table->json('options');
+            $table->json('options')->nullable();
             $table->string('correct_answer')->comment('The ID of the correct option (e.g., "a", "b")');
             $table->text('explanation')->nullable()->comment('Explanation shown after answering');
             $table->unsignedSmallInteger('order')->default(0);
             $table->timestamps();
+
+            $table->index(['quiz_id', 'order']);
         });
     }
 
