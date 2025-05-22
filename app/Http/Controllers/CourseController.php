@@ -34,14 +34,19 @@ final class CourseController extends Controller
             abort(404);
         }
 
-        $course->load(['modules.lessons' => function ($query): void {
-            $query->select('id', 'module_id', 'title', 'slug', 'order');
-        }, 'modules' => function ($query): void {
-            $query->select('id', 'course_id', 'title', 'order');
-        }]);
+        $course->load([
+            'modules.lessons' => function ($query): void {
+                $query->select('id', 'module_id', 'title', 'slug', 'order');
+            }, 'modules.quizzes' => function ($query): void {
+                $query->select('id', 'module_id', 'title', 'description', 'order')
+                    ->orderBy('order');
+            },
+            'modules' => function($query): void{
+                $query->select('id', 'course_id', 'title', 'order');
+            }]);
 
         return Inertia::render('courses/Show', [
-            'course' => $course->only('id', 'title', 'slug', 'description', 'modules'),
+            'course' => $course,
         ]);
     }
 }

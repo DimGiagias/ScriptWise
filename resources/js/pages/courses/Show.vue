@@ -42,6 +42,23 @@ defineProps({
                             <p v-else class="text-sm text-gray-500 italic ml-4">No lessons in this module yet.</p>
                         </div>
                     </div>
+
+                    <!-- Quizzes -->
+                    <div v-if="module.quizzes && module.quizzes.length > 0">
+                        <h4 class="text-sm uppercase text-gray-500 dark:text-gray-400 mb-2 mt-4">Quizzes</h4>
+                        <ul class="list-disc list-inside space-y-2 ml-4">
+                            <li v-for="quiz in module.quizzes" :key="quiz.id">
+                                <Link
+                                    :href="route('quizzes.show', { quiz: quiz.id })"
+                                    class="text-purple-600 hover:underline dark:text-purple-400"
+                                >
+                                    {{ quiz.title }}
+                                    <span v-if="quiz.description" class="text-xs text-gray-500 dark:text-gray-400"> - {{ quiz.description }}</span>
+                                </Link>
+                            </li>
+                        </ul>
+                    </div>
+
                     <div v-else>
                         <p>This course doesn't have any modules yet.</p>
                     </div>
