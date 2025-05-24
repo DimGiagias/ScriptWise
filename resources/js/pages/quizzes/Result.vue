@@ -36,6 +36,7 @@ const scoreColorClass = computed(() => {
                     <div class="p-6 text-gray-900 md:p-8 dark:text-gray-100">
                         <h2 class="mb-4 text-2xl font-semibold md:text-3xl">Results for: {{ quiz.title }}</h2>
 
+                        <!-- Score Display -->
                         <div class="mb-8 rounded-lg bg-gray-50 p-4 text-center dark:bg-gray-700/50">
                             <p class="text-lg font-medium text-gray-700 dark:text-gray-300">Your Score:</p>
                             <p class="text-5xl font-bold" :class="scoreColorClass">{{ attempt.score }}%</p>
@@ -44,7 +45,6 @@ const scoreColorClass = computed(() => {
                             </p>
                             <p v-if="attempt.type === 'random'" class="mt-1 text-xs text-gray-400 dark:text-gray-500">(Random Review)</p>
                         </div>
-
                         <div
                             v-if="deepReviewSuggestions.length > 0"
                             class="mb-8 rounded-lg border border-orange-300 bg-orange-50 p-4 dark:border-orange-700 dark:bg-orange-900/30"
@@ -104,32 +104,8 @@ const scoreColorClass = computed(() => {
                                 </li>
                             </ul>
                         </div>
-
-                        <!-- Detailed Results Breakdown
-                    <h3 class="text-xl font-semibold mb-4 border-t pt-6">Detailed Results</h3>
-                    <div class="space-y-6">
-                        <div v-for="(result, index) in results" :key="result.question_id" class="border p-4 rounded-md" :class="{ 'border-green-300 dark:border-green-700 bg-green-50/50 dark:bg-green-900/10': result.is_correct, 'border-red-300 dark:border-red-700 bg-red-50/50 dark:bg-red-900/10': !result.is_correct }">
-                            <p class="font-semibold mb-2">{{ index + 1 }}. {{ result.question_text }}</p>
-                            <div class="text-sm space-y-1">
-                                <p>Your answer: <span class="font-medium" :class="{ 'text-green-700 dark:text-green-300': result.is_correct, 'text-red-700 dark:text-red-300': !result.is_correct }">
-                                        {{ getOptionText(result.options, result.user_answer) }}
-                                     <span v-if="result.is_correct"> (Correct)</span>
-                                     <span v-else> (Incorrect)</span>
-                                 </span></p>
-                                <p v-if="!result.is_correct">Correct answer: <span class="font-medium text-green-700 dark:text-green-300">{{ getOptionText(result.options, result.correct_answer) }}</span></p>
-                                <p v-if="result.explanation" class="mt-2 pt-2 border-t border-dashed text-gray-600 dark:text-gray-400">
-                                    <span class="font-medium">Explanation:</span> {{ result.explanation }}
-                                </p>
-                            </div>
-                        </div>
-                        <p v-if="result.explanation" class="mt-2 pt-2 border-t border-dashed text-gray-600 dark:text-gray-400">
-             <span class="font-medium">Explanation:</span> {{ result.explanation }}
-         </p>
-                    </div>-->
                         <div class="mt-8 flex justify-between border-t pt-6">
-                            <!-- Link back to course/module? Need data for this -->
                             <Link v-if="false" href="#" class="text-blue-600 hover:underline dark:text-blue-400">« Back to Module</Link>
-                            <!-- Link to next module/course overview? -->
                             <Link :href="route('dashboard')" class="text-blue-600 hover:underline dark:text-blue-400">Go to Dashboard »</Link>
                         </div>
                     </div>

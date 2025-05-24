@@ -18,9 +18,10 @@ return new class extends Migration
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->foreignId('quiz_id')->nullable()->constrained()->onDelete('cascade');
             $table->string('type')->default('standard')->after('quiz_id');
+            // Score as percentage (0-100), calculated after submission
             $table->unsignedTinyInteger('score')->nullable();
             $table->timestamp('started_at')->useCurrent();
-            $table->timestamp('completed_at')->nullable();
+            $table->timestamp('completed_at')->nullable(); // Set when submitted
             $table->timestamps();
         });
     }

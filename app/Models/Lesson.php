@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Facades\Auth;
 
 final class Lesson extends Model
 {
@@ -55,6 +56,21 @@ final class Lesson extends Model
     public function userProgress(): HasMany
     {
         return $this->hasMany(UserProgress::class);
+    }
+
+    /**
+     * Accessor: Dynamically check if the *currently authenticated* user
+     * has completed this lesson.
+     */
+    public function getIsCompletedAttribute(): bool
+    {
+        // If no user is logged in, it's not completed by them
+        if (! Auth::check()) {
+            return false;
+        }
+
+        // Check if a progress record exists for the logged-in user and this lesson
+        return $this->userProgress()->where('user_id', Auth::id())->exists();
     }
 
     // A Lesson has many external resources.

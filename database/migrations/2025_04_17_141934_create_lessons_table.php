@@ -22,7 +22,8 @@ return new class extends Migration
             $table->text('video_embed_html')->nullable()->after('content');
             $table->text('assignment')->nullable()->comment('Assignment description');
             $table->text('initial_code')->nullable()->comment('Starting code for editor');
-            $table->text('expected_output')->nullable();
+            //            $table->text('solution')->nullable()->comment('Optional solution code/explanation');
+            $table->text('expected_output')->nullable()->comment('For simple stdout checks'); // Example addition
             $table->unsignedSmallInteger('order')->default(0);
             $table->timestamps();
 
