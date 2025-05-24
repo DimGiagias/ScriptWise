@@ -22,17 +22,16 @@ const mainNavItems: NavItem[] = [
     {
         title: 'Random Quiz',
         href: '/random-quiz',
-        icon:LayoutGrid,
+        icon: LayoutGrid,
     },
     {
         title: 'My Stats',
         href: '/my-stats',
-        icon:LayoutGrid,
+        icon: LayoutGrid,
     },
 ];
 
 const footerNavItems: NavItem[] = [];
-
 </script>
 
 <template>
