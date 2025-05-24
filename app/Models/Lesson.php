@@ -65,7 +65,7 @@ final class Lesson extends Model
     public function getIsCompletedAttribute(): bool
     {
         // If no user is logged in, it's not completed by them
-        if (!Auth::check()) {
+        if (! Auth::check()) {
             return false;
         }
 
