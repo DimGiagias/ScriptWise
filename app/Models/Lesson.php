@@ -21,6 +21,10 @@ final class Lesson extends Model
         'title',
         'slug',
         'content',
+        'video_embed_html',
+        'assignment',
+        'initial_code',
+        'expected_output',
         'order',
     ];
 
@@ -51,5 +55,11 @@ final class Lesson extends Model
     public function userProgress(): HasMany
     {
         return $this->hasMany(UserProgress::class);
+    }
+
+    // A Lesson has many external resources.
+    public function externalResources(): HasMany
+    {
+        return $this->hasMany(ExternalResource::class);
     }
 }

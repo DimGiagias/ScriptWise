@@ -19,6 +19,7 @@ final class Quiz extends Model
     protected $fillable = [
         'module_id',
         'course_id',
+        'type',
         'title',
         'description',
         'order',

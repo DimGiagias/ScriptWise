@@ -15,24 +15,39 @@ final class ModuleSeeder extends Seeder
      */
     public function run(): void
     {
-        $jsBasics = Course::where('slug', 'javascript-basics')->first();
+        // --- Fundamentals Course Modules ---
+        $fundCourse = Course::where('slug', 'javascript-fundamentals')->first();
+        if ($fundCourse) {
+            Module::create(['course_id' => $fundCourse->id, 'title' => '1. Introduction', 'order' => 1]);
+            Module::create(['course_id' => $fundCourse->id, 'title' => '2. Variables & Data Types', 'order' => 2]);
+            Module::create(['course_id' => $fundCourse->id, 'title' => '3. Operators', 'order' => 3]);
+            Module::create(['course_id' => $fundCourse->id, 'title' => '4. Control Flow (If/Loops)', 'order' => 4]);
+            Module::create(['course_id' => $fundCourse->id, 'title' => '5. Functions', 'order' => 5]);
+            Module::create(['course_id' => $fundCourse->id, 'title' => '6. Arrays & Objects Intro', 'order' => 6]);
+            Module::create(['course_id' => $fundCourse->id, 'title' => '7. Basic DOM Manipulation', 'order' => 7]);
+        }
 
-        if ($jsBasics) {
-            Module::create([
-                'course_id' => $jsBasics->id,
-                'title' => 'Introduction',
-                'order' => 1,
-            ]);
-            Module::create([
-                'course_id' => $jsBasics->id,
-                'title' => 'Variables and Data Types',
-                'order' => 2,
-            ]);
-            Module::create([
-                'course_id' => $jsBasics->id,
-                'title' => 'Operators',
-                'order' => 3,
-            ]);
+        // --- Intermediate Course Modules ---
+        $intCourse = Course::where('slug', 'intermediate-web-dev-js')->first();
+        if ($intCourse) {
+            Module::create(['course_id' => $intCourse->id, 'title' => '1. DOM Deep Dive', 'order' => 1]);
+            Module::create(['course_id' => $intCourse->id, 'title' => '2. Events In-Depth', 'order' => 2]);
+            Module::create(['course_id' => $intCourse->id, 'title' => '3. Working with Forms', 'order' => 3]);
+            Module::create(['course_id' => $intCourse->id, 'title' => '4. Asynchronous JavaScript & Promises', 'order' => 4]);
+            Module::create(['course_id' => $intCourse->id, 'title' => '5. Fetch API & AJAX', 'order' => 5]);
+            Module::create(['course_id' => $intCourse->id, 'title' => '6. Browser Storage', 'order' => 6]);
+        }
+
+        // --- Advanced Course Modules ---
+        $advCourse = Course::where('slug', 'advanced-js-nodejs')->first();
+        if ($advCourse) {
+            Module::create(['course_id' => $advCourse->id, 'title' => '1. Async/Await', 'order' => 1]);
+            Module::create(['course_id' => $advCourse->id, 'title' => '2. JavaScript Modules (ESM/CJS)', 'order' => 2]);
+            Module::create(['course_id' => $advCourse->id, 'title' => '3. OOP in JavaScript (Classes)', 'order' => 3]);
+            Module::create(['course_id' => $advCourse->id, 'title' => '4. Functional Programming Patterns', 'order' => 4]);
+            Module::create(['course_id' => $advCourse->id, 'title' => '5. Advanced Error Handling', 'order' => 5]);
+            Module::create(['course_id' => $advCourse->id, 'title' => '6. Introduction to Node.js', 'order' => 6]);
+            Module::create(['course_id' => $advCourse->id, 'title' => '7. Building a Simple API with Node', 'order' => 7]);
         }
     }
 }

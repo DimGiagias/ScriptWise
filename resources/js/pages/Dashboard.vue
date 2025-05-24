@@ -17,8 +17,7 @@ defineProps({
 const formatDate = (dateString) => {
     if (!dateString) return 'N/A';
     return new Date(dateString).toLocaleString();
-}
-
+};
 </script>
 
 <template>
@@ -26,32 +25,32 @@ const formatDate = (dateString) => {
 
     <AppLayout :breadcrumbs="breadcrumbs">
         <div class="py-12">
-            <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-                <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
+            <div class="mx-auto max-w-7xl sm:px-6 lg:px-8">
+                <div class="overflow-hidden bg-white shadow-sm sm:rounded-lg dark:bg-gray-800">
                     <div class="p-6 text-gray-900 dark:text-gray-100">You're logged in!</div>
                 </div>
 
                 <!-- Quiz History -->
-                <div class="mt-8 bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
+                <div class="mt-8 overflow-hidden bg-white shadow-sm sm:rounded-lg dark:bg-gray-800">
                     <div class="p-6 text-gray-900 dark:text-gray-100">
-                        <h3 class="text-xl font-semibold mb-4">Recent Quiz Attempts</h3>
+                        <h3 class="mb-4 text-xl font-semibold">Recent Quiz Attempts</h3>
                         <div v-if="quizAttempts && quizAttempts.length > 0">
                             <ul class="space-y-3">
-                                <li v-for="attempt in quizAttempts" :key="attempt.id" class="flex justify-between items-center border-b pb-2">
+                                <li v-for="attempt in quizAttempts" :key="attempt.id" class="flex items-center justify-between border-b pb-2">
                                     <div>
                                         <span class="font-medium">{{ attempt.quiz?.title ?? 'Quiz Deleted' }}</span>
-                                        <span class="text-sm text-gray-500 dark:text-gray-400 ml-2">
-                                        on {{ formatDate(attempt.completed_at) }}
-                                    </span>
+                                        <span class="ml-2 text-sm text-gray-500 dark:text-gray-400"> on {{ formatDate(attempt.completed_at) }} </span>
                                     </div>
-                                    <span class="text-lg font-semibold"
-                                          :class="{
-                                        'text-green-600 dark:text-green-400': attempt.score >= 80,
-                                        'text-yellow-600 dark:text-yellow-400': attempt.score >= 50 && attempt.score < 80,
-                                        'text-red-600 dark:text-red-400': attempt.score < 50
-                                      }">
-                                    {{ attempt.score ?? 'N/A' }}%
-                                </span>
+                                    <span
+                                        class="text-lg font-semibold"
+                                        :class="{
+                                            'text-green-600 dark:text-green-400': attempt.score >= 80,
+                                            'text-yellow-600 dark:text-yellow-400': attempt.score >= 50 && attempt.score < 80,
+                                            'text-red-600 dark:text-red-400': attempt.score < 50,
+                                        }"
+                                    >
+                                        {{ attempt.score ?? 'N/A' }}%
+                                    </span>
                                 </li>
                             </ul>
                         </div>
@@ -60,7 +59,6 @@ const formatDate = (dateString) => {
                         </div>
                     </div>
                 </div>
-
             </div>
         </div>
     </AppLayout>

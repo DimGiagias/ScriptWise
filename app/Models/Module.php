@@ -21,18 +21,13 @@ final class Module extends Model
         'order',
     ];
 
-    /**
-     * Define the relationship: A Module belongs to one Course.
-     */
+    // A Module belongs to one Course.
     public function course(): BelongsTo
     {
         return $this->belongsTo(Course::class);
     }
 
-    /**
-     * Define the relationship: A Module has many Lessons.
-     * Orders lessons by the 'order' column.
-     */
+    // A Module has many Lessons.
     public function lessons(): HasMany
     {
         return $this->hasMany(Lesson::class)->orderBy('order');

@@ -29,7 +29,6 @@ final class CourseController extends Controller
      */
     public function show(Course $course): Response
     {
-        // Ensure only published courses are shown
         if (! $course->is_published) {
             abort(404);
         }
@@ -41,7 +40,7 @@ final class CourseController extends Controller
                 $query->select('id', 'module_id', 'title', 'description', 'order')
                     ->orderBy('order');
             },
-            'modules' => function($query): void{
+            'modules' => function ($query): void {
                 $query->select('id', 'course_id', 'title', 'order');
             }]);
 

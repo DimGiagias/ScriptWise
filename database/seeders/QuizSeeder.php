@@ -16,8 +16,8 @@ final class QuizSeeder extends Seeder
      */
     public function run(): void
     {
-        $introModule = Module::where('title', 'Introduction')->first();
-        $varsModule = Module::where('title', 'Variables and Data Types')->first();
+        $introModule = Module::where('title', '1. Introduction')->first();
+        $varsModule = Module::where('title', '2. Variables & Data Types')->first();
 
         if ($introModule) {
             $introQuiz = Quiz::create([

@@ -18,7 +18,7 @@ return new class extends Migration
             $table->foreignId('quiz_attempt_id')->constrained()->onDelete('cascade');
             $table->foreignId('question_id')->constrained()->onDelete('cascade');
             $table->string('user_answer')->nullable();
-            $table->boolean('is_correct')->nullable()->comment('Graded result');
+            $table->boolean('is_correct')->nullable();
             $table->timestamps();
 
             // User can answer each question once per attempt
