@@ -61,7 +61,6 @@ final class QuizController extends Controller
     public function submit(Request $request, Quiz $quiz): Response
     {
         $user = Auth::user();
-        // Expecting answers in format: { 'question_id': 'selected_option_id', ... }
         $submittedAnswers = $request->input('answers', []);
 
         $request->validate([
@@ -93,10 +92,30 @@ final class QuizController extends Controller
                 }
 
                 $question = $questions->get($questionId);
-                if (is_string($userAnswer) && is_string($question->correct_answer)) {
-                    $isCorrect = mb_strtolower(mb_trim($userAnswer)) === mb_strtolower(mb_trim($question->correct_answer));
-                } else {
-                    $isCorrect = $userAnswer === $question->correct_answer;
+                $isCorrect = false;
+                $correctAnswer = $question->correct_answer;
+
+                switch ($question->type) {
+                    case 'multiple_choice':
+                        if (is_string($userAnswer) && is_string($correctAnswer)) {
+                            $isCorrect = mb_strtolower(mb_trim($userAnswer)) === mb_strtolower(mb_trim($correctAnswer));
+                        } else {
+                            $isCorrect = $userAnswer === $correctAnswer;
+                        }
+                        break;
+                    case 'true_false':
+                        if (is_string($userAnswer) && is_string($correctAnswer)) {
+                            $isCorrect = mb_strtolower(mb_trim($userAnswer)) === mb_strtolower($correctAnswer);
+                        }
+                        break;
+                    case 'fill_blank':
+                        if (is_string($userAnswer) && is_string($correctAnswer)) {
+                            $isCorrect = mb_strtolower(mb_trim($userAnswer)) === mb_strtolower(mb_trim($correctAnswer));
+                        }
+                        break;
+                    default:
+                        Log::warning("Grading logic not implemented for question type: {$question->type}");
+                        break;
                 }
 
                 QuizAnswer::create([
@@ -114,6 +133,7 @@ final class QuizController extends Controller
 
                 $resultsData[] = [
                     'question_id' => $question->id,
+                    'question_type' => $question->type,
                     'question_text' => $question->text,
                     'options' => $question->options,
                     'user_answer' => $userAnswer,

@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import AppLayout from '@/layouts/app/AppSidebarLayout.vue';
 import { Head, Link } from '@inertiajs/vue3';
 
 defineProps({
@@ -7,7 +8,7 @@ defineProps({
 
 </script>
 
-<template>
+<template><AppLayout>
     <Head title="Courses" />
 
     <div class="py-12">
@@ -33,4 +34,5 @@ defineProps({
             </div>
         </div>
     </div>
+</AppLayout>
 </template>

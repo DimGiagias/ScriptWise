@@ -35,7 +35,7 @@ final class Question extends Model
         return $this->belongsTo(Quiz::class);
     }
 
-    // Question tests knowledge from one Lesson (nullable)
+    // Question tests knowledge from one Lesson
     public function lesson(): BelongsTo
     {
         return $this->belongsTo(Lesson::class);

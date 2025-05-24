@@ -18,6 +18,7 @@ final class QuestionSeeder extends Seeder
     {
         $introQuiz = Quiz::where('title', 'Quiz: Introduction Concepts')->first();
         $varsQuiz = Quiz::where('title', 'Quiz: Variables')->first();
+        $assessmentQuiz = Quiz::where('type', 'assessment')->where('title', 'JS Basics Placement Assessment')->first();
 
         $lessonWhatIsJs = Lesson::where('slug', 'what-is-javascript')->first();
         $lessonSetup = Lesson::where('slug', 'setting-up-environment')->first();
@@ -57,6 +58,16 @@ final class QuestionSeeder extends Seeder
                 'order' => 2,
             ]);
 
+            Question::create([
+                'quiz_id' => $introQuiz->id,
+                'lesson_id' => $lessonWhatIsJs?->id,
+                'type' => 'true_false',
+                'text' => 'JavaScript can only be used on the frontend (in the browser).',
+                'options' => null,
+                'correct_answer' => 'false',
+                'explanation' => 'JavaScript can also be used on the backend with Node.js.',
+                'order' => 3,
+            ]);
         }
 
         if ($varsQuiz) {
@@ -89,6 +100,73 @@ final class QuestionSeeder extends Seeder
                 'correct_answer' => 'c',
                 'explanation' => 'Arrays are objects in JavaScript, not primitive types.',
                 'order' => 2,
+            ]);
+
+            Question::create([
+                'quiz_id' => $varsQuiz->id,
+                'lesson_id' => $lessonDeclare?->id,
+                'type' => 'fill_blank',
+                'text' => 'The keyword ____ declares a variable that cannot be reassigned.',
+                'options' => null,
+                'correct_answer' => 'const',
+                'explanation' => '`const` ensures the variable binding cannot be reassigned.',
+                'order' => 3,
+            ]);
+            Question::create([
+                'quiz_id' => $varsQuiz->id,
+                'lesson_id' => $lessonTypes?->id,
+                'type' => 'true_false',
+                'text' => '`null` and `undefined` represent the same absence of value in JavaScript.',
+                'options' => null,
+                'correct_answer' => 'false',
+                'explanation' => 'They both represent absence, but `null` is an assigned "no value", while `undefined` means a variable hasn\'t been assigned a value.',
+                'order' => 4,
+            ]);
+        }
+
+        if ($assessmentQuiz && $lessonWhatIsJs && $lessonDeclare && $lessonTypes) {
+            Question::create([
+                'quiz_id' => $assessmentQuiz->id,
+                'lesson_id' => $lessonWhatIsJs?->id,
+                'type' => 'multiple_choice',
+                'text' => 'What is JavaScript primarily used for?',
+                'options' => json_encode([
+                    ['id' => 'a', 'text' => 'Styling web pages'],
+                    ['id' => 'b', 'text' => 'Creating dynamic web content'],
+                    ['id' => 'c', 'text' => 'Managing databases'],
+                    ['id' => 'd', 'text' => 'Server-side logic only'],
+                ]),
+                'correct_answer' => 'b',
+                'explanation' => 'JavaScript runs in the browser to make web pages interactive.',
+                'order' => 1,
+            ]);
+            Question::create([
+                'quiz_id' => $assessmentQuiz->id,
+                'lesson_id' => $lessonDeclare->id,
+                'type' => 'multiple_choice',
+                'text' => 'Which keyword prevents a variable from being reassigned?',
+                'options' => json_encode([['id' => 'a', 'text' => 'let'], ['id' => 'b', 'text' => 'var'], ['id' => 'c', 'text' => 'const']]),
+                'correct_answer' => 'c',
+                'order' => 1,
+            ]);
+            Question::create([
+                'quiz_id' => $assessmentQuiz->id,
+                'lesson_id' => $lessonTypes->id,
+                'type' => 'true_false',
+                'text' => 'Is `null` considered an object type by the `typeof` operator in JavaScript?',
+                'options' => null,
+                'correct_answer' => 'true',
+                'explanation' => 'Due to a historical bug, `typeof null` returns "object".',
+                'order' => 2,
+            ]);
+            Question::create([
+                'quiz_id' => $assessmentQuiz->id,
+                'lesson_id' => $lessonTypes->id,
+                'type' => 'fill_blank',
+                'text' => 'The data type for textual data is called a _____.',
+                'options' => null,
+                'correct_answer' => 'string',
+                'order' => 3,
             ]);
         }
     }

@@ -17,6 +17,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('module_id')->nullable()->constrained()->onDelete('cascade');
             $table->foreignId('course_id')->nullable()->constrained()->onDelete('cascade');
+            $table->enum('type', ['assessment', 'module', 'final_review'])->default('module')->after('id');
             $table->string('title');
             $table->text('description')->nullable();
             $table->unsignedSmallInteger('order')->default(0)->comment('Order within module/course');

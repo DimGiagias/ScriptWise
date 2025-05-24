@@ -15,9 +15,16 @@ final class QuizAttempt extends Model
     /** @use HasFactory<QuizAttemptFactory> */
     use HasFactory;
 
+    public const string TYPE_STANDARD = 'standard';
+
+    public const string TYPE_RANDOM = 'random';
+
+    public const string TYPE_FINAL_REVIEW = 'final_review';
+
     protected $fillable = [
         'user_id',
         'quiz_id',
+        'type',
         'score',
         'started_at',
         'completed_at',
