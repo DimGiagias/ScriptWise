@@ -71,9 +71,9 @@ const submit = () => {
                     <InputError :message="form.errors.password" />
                 </div>
 
-                <div class="flex items-center justify-between">
+                <div class="flex items-center justify-between" :tabindex="3">
                     <Label for="remember" class="flex items-center space-x-3">
-                        <Checkbox id="remember" v-model="form.remember" :tabindex="3" />
+                        <Checkbox id="remember" v-model="form.remember" :tabindex="4" />
                         <span>Remember me</span>
                     </Label>
                 </div>
@@ -84,7 +84,7 @@ const submit = () => {
                 </Button>
             </div>
 
-            <div class="text-muted-foreground text-center text-sm">
+            <div class="text-center text-sm text-muted-foreground">
                 Don't have an account?
                 <TextLink :href="route('register')" :tabindex="5">Sign up</TextLink>
             </div>

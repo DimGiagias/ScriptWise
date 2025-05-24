@@ -4,8 +4,9 @@ import { Head, useForm } from '@inertiajs/vue3';
 import { computed } from 'vue';
 
 const props = defineProps({
+    course: Object,
     quiz: Object, // Contains id, title, description, questions (array)
-       // Array of { id, title, url, external_resources: [{title, url, type, description}, ...] }
+                  // Question contains id, quiz_id, type, text, options (array), order
 });
 
 console.log(props.quiz)
@@ -28,7 +29,7 @@ const submitQuiz = () => {
         return;
     }
 
-    form.post(route('quizzes.submit', { quiz: props.quiz.id }), {
+    form.post(route('course.assessment.submit', { course: props.course.slug }), {
         preserveScroll: true, // Keep scroll position on validation errors
         onError: (errors) => {
             // Handle potential validation errors from backend
@@ -136,29 +137,29 @@ const allAnswered = computed(() => {
 
 
                             <!-- Add rendering for other question types here later -->
-                                <!--<div v-else-if="question.type === 'other_type'"> ... </div>-->
+                            <!--<div v-else-if="question.type === 'other_type'"> ... </div>-->
 
+                        </div>
+
+                        <!-- Submission Button -->
+                        <div class="mt-8 pt-6 border-t">
+                            <button
+                                type="submit"
+                                :disabled="form.processing || !allAnswered"
+                                class="w-full md:w-auto inline-flex justify-center items-center px-6 py-3 border border-transparent text-base font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
+                            >
+                                <svg v-if="form.processing" class="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                </svg>
+                                <span>{{ form.processing ? 'Submitting...' : 'Submit Answers' }}</span>
+                            </button>
+                            <p v-if="!allAnswered && !form.processing" class="text-sm text-red-600 mt-2">Please answer all questions.</p>
+
+                            <div v-else>
+                                <p>This quiz doesn't have any questions yet.</p>
                             </div>
-
-                            <!-- Submission Button -->
-                            <div class="mt-8 pt-6 border-t">
-                                <button
-                                    type="submit"
-                                    :disabled="form.processing || !allAnswered"
-                                    class="w-full md:w-auto inline-flex justify-center items-center px-6 py-3 border border-transparent text-base font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
-                                >
-                                    <svg v-if="form.processing" class="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                                    </svg>
-                                    <span>{{ form.processing ? 'Submitting...' : 'Submit Answers' }}</span>
-                                </button>
-                                <p v-if="!allAnswered && !form.processing" class="text-sm text-red-600 mt-2">Please answer all questions.</p>
-
-                                <div v-else>
-                                    <p>This quiz doesn't have any questions yet.</p>
-                                </div>
-                            </div>
+                        </div>
                     </form>
 
                 </div>

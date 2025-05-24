@@ -1,96 +1,105 @@
 <script setup lang="ts">
-//import AppLayout from '@/layouts/app/AppSidebarLayout.vue';
+import AppLayout from '@/layouts/app/AppSidebarLayout.vue';
 import { Head, Link, useForm } from '@inertiajs/vue3';
 import { computed } from 'vue';
 
 const props = defineProps({
-    quizData: Object, // { id, title, description, questions: [...] } or null
-    message: String, // Optional message (e.g., no lessons completed)
+    course: Object,
+    quizData: Object,
+    message: String,
 });
 
-//defineOptions({ layout: AppLayout });
-
-console.log(props.quizData)
-// Initialize form only if quizData exists
 const form = useForm({
     answers: {},
-    quizId: props.quizData?.id || null, // Include the temporary quiz ID
+    quizId: props.quizData?.id || null,
 });
 
-if (props.quizData) {
+if (props.quizData && props.quizData.questions) {
     props.quizData.questions.forEach(q => {
         form.answers[q.id] = null;
     });
 }
 
 const submitQuiz = () => {
-    // Optional: Add confirmation for unanswered questions
-    if (!props.quizData) return; // Should not happen if button is disabled
+    if (!props.quizData || !props.course) return;
 
-    form.post(route('random-quiz.submit'), { // Post to the correct route
+    form.post(route('course.review.submit', { course: props.course.slug }), {
         preserveScroll: true,
         onError: (errors) => {
             console.error('Submission errors:', errors);
-            // Consider showing user-friendly errors
-            alert('Error submitting quiz. Check console or try again.');
-            // Reset processing state if needed
-            form.processing = false; // Manual reset might be needed on error
+            alert('Error submitting review quiz. Check console or try again.');
+            form.processing = false;
         },
-        onFinish: () => {
-            // Optional: Reset processing state if needed
-            // form.processing = false; // Might reset too early depending on Inertia flow
-        }
     });
 };
 
 const allAnswered = computed(() => {
     if (!props.quizData?.questions || props.quizData.questions.length === 0) return true;
-    return props.quizData.questions.every(q => form.answers[q.id] !== null);
+    return props.quizData.questions.every(q => {
+        const answer = form.answers[q.id];
+        return answer !== null && answer !== undefined && (typeof answer === 'string' ? answer.trim() !== '' : true);
+    });
 });
+
+const quizPageTitle = computed(() => {
+    return props.quizData?.title || `Review: ${props.course?.title || 'Course'}`;
+});
+const quizMainTitle = computed(() => {
+    return props.quizData?.title || `Final Review: ${props.course?.title || 'Course'}`;
+});
+const quizDescription = computed(() => {
+    return props.quizData?.description || `This quiz will test your knowledge on topics covered in the '${props.course?.title || 'Course'}'.`;
+});
+
 </script>
 
 <template>
-
-    <Head title="Random Review Quiz" />
+    <AppLayout>
+    <Head :title="quizPageTitle" />
 
     <div class="py-12">
         <div class="max-w-3xl mx-auto sm:px-6 lg:px-8">
             <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-6 md:p-8 text-gray-900 dark:text-gray-100">
 
-                    <h2 class="text-2xl md:text-3xl font-semibold mb-2">Random Review Quiz</h2>
+                    <div class="mb-4">
+                        <Link :href="route('courses.show', { course: course.slug })" class="text-blue-600 hover:underline dark:text-blue-400 text-sm">
+                            « Back to {{ course.title }}
+                        </Link>
+                    </div>
 
-                    <!-- Display message if quiz couldn't generate -->
+                    <h2 class="text-2xl md:text-3xl font-semibold mb-2">{{ quizMainTitle }}</h2>
+
                     <div v-if="message" class="p-4 mb-4 text-sm text-yellow-700 bg-yellow-100 rounded-lg dark:bg-yellow-200 dark:text-yellow-800" role="alert">
                         {{ message }}
                         <div v-if="!quizData" class="mt-4">
-                            <Link :href="route('dashboard')" class="font-medium text-blue-600 hover:underline">
-                                Go to Dashboard
+                            <Link :href="route('courses.show', { course: course.slug })" class="font-medium text-blue-600 hover:underline">
+                                Return to Course
                             </Link>
                         </div>
                     </div>
 
                     <!-- Display Quiz Form if generated -->
                     <div v-if="quizData">
-                        <p v-if="quizData.description" class="text-gray-600 dark:text-gray-400 mb-6">{{ quizData.description }}</p>
+                        <p class="text-gray-600 dark:text-gray-400 mb-6">{{ quizDescription }}</p>
 
                         <form @submit.prevent="submitQuiz">
-                            <div v-if="quizData.questions.length > 0" class="space-y-6">
-                                <!-- Question Loop (copy from Quizzes/Show.vue) -->
-                                <div v-for="(question, index) in quizData.questions" :key="question.id" class="border-t pt-6">
+                            <div v-if="quizData.questions && quizData.questions.length > 0" class="space-y-6">
+                                <div v-for="(question, index) in quizData.questions" :key="question.id" class="border-t pt-6 dark:border-gray-700">
                                     <p class="font-semibold mb-3">
                                         {{ index + 1 }}. {{ question.text }}
                                     </p>
+                                    <!-- Multiple Choice -->
                                     <div v-if="question.type === 'multiple_choice'" class="space-y-2 ml-4">
                                         <label v-for="option in question.options" :key="option.id"
-                                               class="flex items-center p-3 border rounded-md hover:bg-gray-50 dark:hover:bg-gray-700 transition cursor-pointer"
+                                               class="flex items-center p-3 border rounded-md hover:bg-gray-50 dark:border-gray-700 dark:hover:bg-gray-700 transition cursor-pointer"
                                                :class="{ 'bg-blue-50 dark:bg-blue-900/30 border-blue-300 dark:border-blue-700': form.answers[question.id] === option.id }">
                                             <input
                                                 type="radio"
                                                 :name="`question_${question.id}`"
                                                 :value="option.id"
                                                 v-model="form.answers[question.id]"
-                                                class="h-4 w-4 text-blue-600 border-gray-300 focus:ring-blue-500 mr-3"
+                                                class="h-4 w-4 text-blue-600 border-gray-300 dark:border-gray-600 focus:ring-blue-500 mr-3"
                                             />
                                             <span>{{ option.text }}</span>
                                         </label>
@@ -98,34 +107,19 @@ const allAnswered = computed(() => {
 
                                     <!-- True/False -->
                                     <div v-else-if="question.type === 'true_false'" class="space-y-2 ml-4">
-                                        <label class="flex items-center p-3 border rounded-md hover:bg-gray-50 dark:hover:bg-gray-700 transition cursor-pointer"
+                                        <label class="flex items-center p-3 border rounded-md hover:bg-gray-50 dark:border-gray-700 dark:hover:bg-gray-700 transition cursor-pointer"
                                                :class="{ 'bg-blue-50 dark:bg-blue-900/30 border-blue-300 dark:border-blue-700': form.answers[question.id] === 'true' }">
-                                            <input
-                                                type="radio"
-                                                :name="`question_${question.id}`"
-                                                value="true"
-                                                v-model="form.answers[question.id]"
-                                                class="h-4 w-4 text-blue-600 border-gray-300 focus:ring-blue-500 mr-3"
-                                            />
+                                            <input type="radio" :name="`question_${question.id}`" value="true" v-model="form.answers[question.id]" class="h-4 w-4 text-blue-600 border-gray-300 dark:border-gray-600 focus:ring-blue-500 mr-3"/>
                                             <span>True</span>
                                         </label>
-                                        <label class="flex items-center p-3 border rounded-md hover:bg-gray-50 dark:hover:bg-gray-700 transition cursor-pointer"
+                                        <label class="flex items-center p-3 border rounded-md hover:bg-gray-50 dark:border-gray-700 dark:hover:bg-gray-700 transition cursor-pointer"
                                                :class="{ 'bg-blue-50 dark:bg-blue-900/30 border-blue-300 dark:border-blue-700': form.answers[question.id] === 'false' }">
-                                            <input
-                                                type="radio"
-                                                :name="`question_${question.id}`"
-                                                value="false"
-                                                v-model="form.answers[question.id]"
-                                                class="h-4 w-4 text-blue-600 border-gray-300 focus:ring-blue-500 mr-3"
-                                            />
+                                            <input type="radio" :name="`question_${question.id}`" value="false" v-model="form.answers[question.id]" class="h-4 w-4 text-blue-600 border-gray-300 dark:border-gray-600 focus:ring-blue-500 mr-3"/>
                                             <span>False</span>
                                         </label>
                                     </div>
 
-                                    <!-- Fill in the Blank -->
                                     <div v-else-if="question.type === 'fill_blank'" class="ml-4 mt-2">
-                                        <!-- Display question text above (already done) -->
-                                        <!-- Provide an input field for the answer -->
                                         <input
                                             type="text"
                                             v-model="form.answers[question.id]"
@@ -133,38 +127,36 @@ const allAnswered = computed(() => {
                                             placeholder="Type your answer here"
                                             class="mt-1 block w-full md:w-1/2 border-gray-300 rounded-md shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400"
                                         />
-                                        <!-- Optional: Add styling or hints -->
                                     </div>
                                 </div>
 
-                                <!-- Submission Button (copy from Quizzes/Show.vue) -->
-                                <div class="mt-8 pt-6 border-t">
+                                <div class="mt-8 pt-6 border-t dark:border-gray-700">
                                     <button
                                         type="submit"
                                         :disabled="form.processing || !allAnswered"
                                         class="w-full md:w-auto inline-flex justify-center items-center px-6 py-3 border border-transparent text-base font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
                                     >
-                                        <!-- SVG Spinner -->
                                         <svg v-if="form.processing" class="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
-                                        <span>{{ form.processing ? 'Submitting...' : 'Submit Answers' }}</span>
+                                        <span>{{ form.processing ? 'Submitting...' : 'Submit Review Answers' }}</span>
                                     </button>
                                     <p v-if="!allAnswered && !form.processing" class="text-sm text-red-600 mt-2">Please answer all questions.</p>
                                 </div>
-
                             </div>
-                            <div v-else>
-                                <p>Could not load questions for this quiz.</p>
+                            <div v-else class="mt-6">
+                                <p class="italic text-gray-500">No questions available for this review quiz at the moment.</p>
                             </div>
                         </form>
                     </div>
-
+                    <div v-else-if="!message" class="mt-6">
+                        <p class="italic text-gray-500">Loading review quiz or no review available...</p>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
-
+    </AppLayout>
 </template>
 
 <style scoped>
-
+/* Add any specific styles if needed */
 </style>
