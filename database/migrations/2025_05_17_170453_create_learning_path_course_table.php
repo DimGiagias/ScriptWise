@@ -17,10 +17,10 @@ return new class extends Migration
             $table->id();
             $table->foreignId('learning_path_id')->constrained()->onDelete('cascade');
             $table->foreignId('course_id')->constrained()->onDelete('cascade');
-            $table->unsignedSmallInteger('order')->default(0);
-            $table->timestamps();
+            $table->unsignedSmallInteger('order')->default(0); // Order of the course in the path
+            $table->timestamps(); // Usually not needed for simple pivot unless tracking when added
 
-            $table->unique(['learning_path_id', 'course_id']);
+            $table->unique(['learning_path_id', 'course_id']); // A course appears once per path
             $table->index(['learning_path_id', 'order']);
         });
     }
