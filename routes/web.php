@@ -13,13 +13,9 @@ use App\Http\Controllers\UserPreferenceController;
 use App\Http\Controllers\UserProgressController;
 use App\Http\Controllers\UserStatsController;
 use Illuminate\Support\Facades\Route;
-use Inertia\Inertia;
-
-Route::get('/', function () {
-    return Inertia::render('Welcome');
-})->name('home');
 
 Route::middleware(['auth', 'verified'])->group(function (): void {
+    Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
     Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
     Route::get('/quizzes/{quiz}', [QuizController::class, 'show'])->name('quizzes.show');
