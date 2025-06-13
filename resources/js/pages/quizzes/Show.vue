@@ -7,7 +7,7 @@ const props = defineProps({
     quiz: Object,
 });
 
-console.log(props.quiz);
+//console.log(props.quiz);
 
 const form = useForm({
     answers: {},
@@ -47,7 +47,7 @@ const allAnswered = computed(() => {
         <Head :title="`Quiz: ${quiz.title}`" />
 
         <div class="py-12">
-            <div class="mx-auto max-w-3xl sm:px-6 lg:px-8">
+            <div class="mx-auto sm:px-6 lg:px-8">
                 <div class="overflow-hidden bg-white shadow-sm sm:rounded-lg dark:bg-gray-800">
                     <div class="p-6 text-gray-900 md:p-8 dark:text-gray-100">
                         <h2 class="mb-2 text-2xl font-semibold md:text-3xl">{{ quiz.title }}</h2>
