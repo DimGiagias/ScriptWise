@@ -16,6 +16,10 @@ final class DatabaseSeeder extends Seeder
     {
         // User::factory(10)->create();
 
+        $this->call([
+            LearningPathSeeder::class,
+        ]);
+
         User::factory()->create([
             'name' => 'Test User',
             'email' => 'test@example.com',
@@ -23,8 +27,10 @@ final class DatabaseSeeder extends Seeder
 
         $this->call([
             CourseSeeder::class,
+            LearningPathCourseSeeder::class,
             ModuleSeeder::class,
             LessonSeeder::class,
+            ExternalResourceSeeder::class,
             QuizSeeder::class,
             QuestionSeeder::class,
         ]);

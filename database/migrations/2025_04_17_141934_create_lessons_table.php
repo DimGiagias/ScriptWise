@@ -19,6 +19,11 @@ return new class extends Migration
             $table->string('title');
             $table->string('slug')->unique();
             $table->longText('content')->comment('Lesson text, Markdown or HTML');
+            $table->text('video_embed_html')->nullable()->after('content');
+            $table->text('assignment')->nullable()->comment('Assignment description');
+            $table->text('initial_code')->nullable()->comment('Starting code for editor');
+            //            $table->text('solution')->nullable()->comment('Optional solution code/explanation');
+            $table->text('expected_output')->nullable()->comment('For simple stdout checks'); // Example addition
             $table->unsignedSmallInteger('order')->default(0);
             $table->timestamps();
 

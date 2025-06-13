@@ -16,11 +16,15 @@ final class LessonController extends Controller
      */
     public function show(Course $course, Lesson $lesson): Response
     {
+
         if ($lesson->module->course_id !== $course->id) {
             abort(404);
         }
 
-        // Ensure the parent course is published
+        if ($lesson->module->course_id !== $course->id) {
+            abort(404);
+        }
+
         if (! $course->is_published) {
             abort(404);
         }

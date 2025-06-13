@@ -13,13 +13,14 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('lesson_quiz', function (Blueprint $table) {
+        Schema::create('external_resources', function (Blueprint $table) {
             $table->id();
             $table->foreignId('lesson_id')->constrained()->onDelete('cascade');
-            $table->foreignId('quiz_id')->constrained()->onDelete('cascade');
+            $table->string('title');
+            $table->text('url');
+            $table->enum('type', ['video', 'article', 'documentation', 'book_chapter', 'interactive_tool'])->default('article');
+            $table->text('description')->nullable();
             $table->timestamps();
-
-            $table->unique(['lesson_id', 'quiz_id']);
         });
     }
 
@@ -28,6 +29,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('lesson_quiz');
+        Schema::dropIfExists('external_resources');
     }
 };
