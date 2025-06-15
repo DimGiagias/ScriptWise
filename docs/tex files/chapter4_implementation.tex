@@ -1,0 +1,87 @@
+% --- ΚΕΦΑΛΑΙΟ 4: Υλοποίηση και Τεχνολογίες ---
+
+\section{Υλοποίηση και Τεχνολογίες}
+\label{sec:ylopoiisi_texnologies}
+Το παρόν κεφάλαιο παρέχει μια επισκόπηση των τεχνολογιών και των εργαλείων που αξιοποιήθηκαν για την ανάπτυξη του εκπαιδευτικού λογισμικού εκμάθησης \eng{JavaScript}, καθώς και μια συνοπτική περιγραφή των βασικών βημάτων που ακολουθήθηκαν κατά τη διαδικασία της υλοποίησης.
+
+\subsection{Τεχνολογίες που Χρησιμοποιήθηκαν}
+\label{sec:texnologies_used}
+Η ανάπτυξη της εφαρμογής βασίστηκε σε ένα σύνολο σύγχρονων τεχνολογιών και εργαλείων, τα οποία επιλέχθηκαν για την αποτελεσματικότητα, την ευελιξία και την υποστήριξη που προσφέρουν στην ανάπτυξη διαδικτυακών εφαρμογών. Οι κύριες τεχνολογίες που χρησιμοποιήθηκαν είναι:
+
+\textbf{\eng{Backend}:}
+\begin{itemize}[leftmargin=*, noitemsep]
+    \item \textbf{\eng{PHP} (Έκδοση 8.4):} Η γλώσσα προγραμματισμού στην οποία βασίζεται το \eng{backend} της εφαρμογής.
+    \item \textbf{\eng{Laravel Framework} (Έκδοση 12):} Ένα δημοφιλές \eng{PHP framework} που ακολουθεί το αρχιτεκτονικό πρότυπο \eng{Model-View-Controller (MVC)}. Παρέχει πληθώρα ενσωματωμένων λειτουργιών για \eng{routing, ORM (Eloquent)}, αυθεντικοποίηση, διαχείριση \eng{session}, και πολλά άλλα, επιταχύνοντας σημαντικά την ανάπτυξη.
+    \item \textbf{\eng{Composer}:} Διαχειριστής πακέτων (\eng{dependency manager}) για τη \eng{PHP}, χρησιμοποιήθηκε για την εγκατάσταση και διαχείριση των βιβλιοθηκών του \eng{Laravel} και άλλων \eng{PHP} πακέτων.
+\end{itemize}
+
+\textbf{\eng{Frontend}:}
+\begin{itemize}[leftmargin=*, noitemsep]
+    \item \textbf{\eng{JavaScript (ES6+)}:} Η γλώσσα προγραμματισμού για τη δημιουργία της διαδραστικότητας στην πλευρά του \eng{client}.
+    \item \textbf{\eng{Vue.js 3}:} Ένα προοδευτικό \eng{JavaScript framework} για τη δημιουργία διεπαφών χρήστη. Χρησιμοποιήθηκε για την ανάπτυξη των \eng{frontend components} της εφαρμογής.
+    \item \textbf{\eng{Inertia.js}:} Λειτουργεί ως "γέφυρα" μεταξύ του \eng{Laravel backend} και του \eng{Vue.js frontend}, επιτρέποντας την ανάπτυξη σύγχρονων μονοσέλιδων εφαρμογών (\eng{SPA-like experience}) χωρίς την ανάγκη δημιουργίας ξεχωριστού \eng{API}.
+    \item \textbf{\eng{Vite}:} Ένα σύγχρονο εργαλείο \eng{frontend build} που παρέχει εξαιρετικά γρήγορο \eng{Hot Module Replacement (HMR)} κατά την ανάπτυξη και βελτιστοποιημένα \eng{builds} για παραγωγή.
+    \item \textbf{\eng{Tailwind CSS}:} Ένα \eng{utility-first CSS framework} που χρησιμοποιήθηκε για τη γρήγορη και ευέλικτη διαμόρφωση της εμφάνισης της εφαρμογής.
+    \item \textbf{\eng{Monaco Editor} (μέσω \eng{@monaco-editor/loader}):} Ο επεξεργαστής κώδικα που τροφοδοτεί το \eng{VS Code}, ενσωματώθηκε για την παροχή μιας πλούσιας εμπειρίας επεξεργασίας κώδικα \eng{JavaScript} εντός της πλατφόρμας.
+    \item \textbf{\eng{vue-chartjs}:} Βιβλιοθήκη \eng{JavaScript} για τη δημιουργία των διαδραστικών γραφημάτων για την οπτικοποίηση των στατιστικών προόδου.
+    \item \textbf{\eng{npm (Node Package Manager)}:} Διαχειριστής πακέτων για τη \eng{JavaScript}, χρησιμοποιήθηκε για την εγκατάσταση και διαχείριση των \eng{frontend} βιβλιοθηκών και εργαλείων.
+\end{itemize}
+
+\textbf{Βάση Δεδομένων:}
+\begin{itemize}[leftmargin=*, noitemsep]
+    \item \textbf{\eng{SQLite}:} Μια ελαφριά, \eng{file-based} βάση δεδομένων που είναι εύκολη στη χρήση για τοπική ανάπτυξη και δοκιμές.
+\end{itemize}
+
+\textbf{Εργαλεία Ανάπτυξης:} \eng{PHP Storm, Git, Browser Developer Tools, Tinker.}
+
+
+\subsection{Συνοπτικά τα Βασικά Βήματα Υλοποίησης}
+\label{sec:vimata_ylopoiisis_sum}
+Η υλοποίηση της εκπαιδευτικής πλατφόρμας ακολούθησε μια επαυξητική προσέγγιση, όπου οι βασικές λειτουργίες αναπτύχθηκαν πρώτα και στη συνέχεια προστέθηκαν σταδιακά πιο σύνθετα χαρακτηριστικά και οι μηχανισμοί εξατομίκευσης. Τα κύρια βήματα της διαδικασίας υλοποίησης μπορούν να συνοψιστούν ως εξής:
+\begin{enumerate}[leftmargin=*, noitemsep]
+    \item Αρχική Ρύθμιση του \eng{Project (Project Setup)}:
+    Δημιουργία νέου \eng{Laravel project}.
+    Εγκατάσταση και παραμετροποίηση του \eng{Laravel Breeze} (ή \eng{Jetstream}) με το \eng{Vue.js} και \eng{Inertia.js stack} για την παροχή βασικής αυθεντικοποίησης και αρχικής δομής \eng{frontend}.
+    Ρύθμιση της βάσης δεδομένων (αρχικά \eng{SQLite}).
+    Εγκατάσταση του \eng{Tailwind CSS} για το \eng{styling}.
+    \item Σχεδιασμός και Υλοποίηση Βασικών Μοντέλων Βάσης Δεδομένων:
+    Δημιουργία των αρχικών \eng{migrations} και \eng{Eloquent models} για τις κύριες οντότητες: \eng{User, Course, Module, Lesson}.
+    Καθορισμός των αρχικών σχέσεων μεταξύ αυτών των μοντέλων.
+    \item Υλοποίηση Βασικής Λειτουργικότητας Μαθημάτων:
+    Δημιουργία των \eng{CourseController} και \eng{LessonController}.
+    Ανάπτυξη των \eng{Vue page components (Courses/Index.vue, Courses/Show.vue, Lessons/Show.vue)} για την εμφάνιση της λίστας των \eng{courses}, των λεπτομερειών ενός \eng{course (modules και lessons)}, και του περιεχομένου ενός \eng{lesson}.
+    Δημιουργία αρχικών \eng{seeders} για την εισαγωγή δοκιμαστικού περιεχομένου \eng{courses, modules, και lessons}.
+    \item Ενσωμάτωση Επεξεργαστή Κώδικα και Εκτέλεσης Ασκήσεων:
+    Προσθήκη των απαραίτητων πεδίων (\eng{assignment, initial\_code, expected\_output}) στο \eng{Lesson model} και \eng{migration}.
+    Ενσωμάτωση του \eng{Monaco Editor} στο \eng{Lessons/Show.vue}.
+    Υλοποίηση της \eng{client-side} εκτέλεσης \eng{JavaScript} κώδικα και της εμφάνισης του \eng{output/errors}.
+    Υλοποίηση της αυτόματης ολοκλήρωσης μαθήματος (\eng{UserProgressController}) βάσει της επιτυχούς εκτέλεσης της άσκησης.
+    \item Ανάπτυξη Συστήματος \eng{Quiz}:
+    Σχεδιασμός και υλοποίηση των \eng{models Quiz, Question, QuizAttempt, QuizAnswer}.
+    Επέκταση των \eng{seeders} για τη δημιουργία \eng{module quizzes} και ερωτήσεων διαφόρων τύπων (\eng{multiple choice, true/false, fill\_blank}).
+    Δημιουργία του \eng{QuizController} για τη διαχείριση της εμφάνισης και υποβολής των \eng{module quizzes}.
+    Ανάπτυξη των \eng{Vue components quizzes/Show.vue} και \eng{quizzes/Result.vue}.
+    \item Υλοποίηση Μηχανισμών Εξατομικευμένης Μάθησης:
+    \begin{itemize}[leftmargin=*, noitemsep]
+        \item \textbf{\eng{Pre-course Assessment}:}
+        Τροποποίηση \eng{models} και \eng{seeders} για υποστήριξη \eng{assessment quizzes}.
+        Δημιουργία \eng{CourseAssessmentController} και των αντίστοιχων \eng{Vue pages}.
+        \item \textbf{\eng{Learning Style \& Path Preferences}:}
+        Τροποποίηση \eng{User model} και \eng{migration}, δημιουργία \eng{LearningPath model} και \eng{pivot table learning\_path\_course}.
+        Δημιουργία \eng{seeders} για \eng{learning paths}.
+        Ενημέρωση \eng{DashboardController} και \eng{UserPreferenceController} για διαχείριση προτιμήσεων.
+        Ενημέρωση \eng{Dashboard.vue} για επιλογή προτιμήσεων και \eng{lessons/Show.vue} για προσαρμογή περιεχομένου.
+        \item \textbf{\eng{Post-course Review Quiz \& External Resources}:}
+        Τροποποίηση \eng{models} για \eng{final review quizzes}, δημιουργία \eng{ExternalResource model}.
+        Δημιουργία \eng{CourseReviewController} και ενημέρωση \eng{seeders/Vue components}.
+        \item \textbf{\eng{Random Review Quiz}:}
+        Δημιουργία \eng{RandomQuizController} και σχετικών \eng{Vue components}.
+        Τροποποίηση \eng{QuizAttempt model} για υποστήριξη \eng{random quiz attempts}.
+    \end{itemize}
+    \item Ανάπτυξη Σελίδας Στατιστικών Χρήστη:
+    Υλοποίηση μεθόδων στο \eng{User model} για υπολογισμό \eng{learning streak}, κατανομής σκορ \eng{quiz}, και δεδομένων για \eng{contribution graph}.
+    Δημιουργία \eng{UserStatsController}.
+    Εγκατάσταση \eng{vue-chartjs} και ανάπτυξη του \eng{profile/Statistics.vue} για την οπτικοποίηση των δεδομένων.
+    \item Συνεχής Δοκιμή και Βελτίωση:
+    Καθ' όλη τη διάρκεια της ανάπτυξης, πραγματοποιούνταν λειτουργικές δοκιμές για την επαλήθευση της ορθής λειτουργίας των νέων χαρακτηριστικών και τη διόρθωση τυχόν σφαλμάτων.
+\end{enumerate}
