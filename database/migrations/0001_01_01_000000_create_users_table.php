@@ -20,15 +20,15 @@ return new class extends Migration
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
             $table->rememberToken();
-            $table->enum('preferred_learning_style', ['reading', 'visual', 'balanced'])
-                ->default('balanced')
-                ->nullable() // Allow null if user hasn't set it
-                ->after('password'); // Place it after password
+            $table->enum('preferred_learning_style', ['reading', 'visual'])
+                ->default('reading')
+                ->nullable()
+                ->after('password');
 
-            $table->foreignId('learning_path_id') // New column name
+            $table->foreignId('learning_path_id')
                 ->nullable()
                 ->after('preferred_learning_style')
-                ->constrained('learning_paths') // Foreign key to learning_paths table
+                ->constrained('learning_paths')
                 ->onDelete('set null');
             $table->timestamps();
         });

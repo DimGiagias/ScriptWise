@@ -1,7 +1,5 @@
 <?php
 
-declare(strict_types=1);
-
 namespace App\Http\Controllers;
 
 use App\Models\Course;
@@ -10,7 +8,6 @@ use App\Models\Question;
 use App\Models\Quiz;
 use App\Models\QuizAnswer;
 use App\Models\QuizAttempt;
-use Exception;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -20,21 +17,20 @@ use Illuminate\Support\Facades\Redirect;
 use Inertia\Inertia;
 use Inertia\Response;
 
-final class CourseReviewController extends Controller
+class CourseReviewController extends Controller
 {
-    public const REVIEW_QUIZ_WRONG_QUESTIONS_TARGET = 5; // Target number of previously wrong questions
-
-    public const REVIEW_QUIZ_NEW_QUESTIONS_TARGET = 5;  // Target number of new/random questions
+    const REVIEW_QUIZ_WRONG_QUESTIONS_TARGET = 5; // Target number of previously wrong questions
+    const REVIEW_QUIZ_NEW_QUESTIONS_TARGET = 5;  // Target number of new/random questions
 
     /**
      * Generate and display the final review quiz for a course.
      */
-    public function generate(Course $course): Response|RedirectResponse
+    public function generate(Course $course): Response | RedirectResponse
     {
         $user = Auth::user();
 
         $placeholderQuiz = $course->finalReviewQuiz;
-        if (! $placeholderQuiz) {
+        if (!$placeholderQuiz) {
             Log::warning("CourseReview: Course {$course->id} has no final_review_quiz_id linked.");
             $quizTitle = "{$course->title} - Final Review";
             $quizDescription = "A comprehensive review of topics from {$course->title}.";
@@ -70,10 +66,11 @@ final class CourseReviewController extends Controller
                 ->get();
         }
 
+        // Combine and shuffle questions
         $finalQuestions = $wrongQuestions->concat($newQuestions)->shuffle();
 
         if ($finalQuestions->isEmpty()) {
-            return Inertia::render('Courses/Review/Show', [
+            return Inertia::render('courses/review/Show', [
                 'course' => $course->only('id', 'title', 'slug'),
                 'quizData' => null,
                 'message' => 'Not enough questions available for a review quiz for this course yet. Try completing more module quizzes.',
@@ -93,13 +90,13 @@ final class CourseReviewController extends Controller
         });
 
         $quizDataForView = [
-            'id' => 'final_review_'.$course->id.'_'.uniqid(),
+            'id' => 'final_review_' . $course->id . '_' . uniqid(),
             'title' => $quizTitle,
             'description' => $quizDescription,
             'questions' => $displayQuestions,
         ];
 
-        session(['_courseReviewQuestions_'.$course->id => $finalQuestions->keyBy('id')->toArray()]);
+        session(['_courseReviewQuestions_' . $course->id => $finalQuestions->keyBy('id')->toArray()]);
 
         return Inertia::render('courses/review/Show', [
             'course' => $course->only('id', 'title', 'slug'),
@@ -108,10 +105,11 @@ final class CourseReviewController extends Controller
         ]);
     }
 
+
     /**
      * Process and grade the submitted final review quiz.
      */
-    public function submit(Request $request, Course $course): Response|RedirectResponse
+    public function submit(Request $request, Course $course): Response | RedirectResponse
     {
         $user = Auth::user();
         $submittedAnswers = $request->input('answers', []);
@@ -119,10 +117,11 @@ final class CourseReviewController extends Controller
 
         $request->validate(['answers' => 'required|array', 'quizId' => 'required|string']);
 
-        $correctQuestionsData = session('_courseReviewQuestions_'.$course->id);
-        session()->forget('_courseReviewQuestions_'.$course->id);
+        // Retrieve correct answers from session
+        $correctQuestionsData = session('_courseReviewQuestions_' . $course->id);
+        session()->forget('_courseReviewQuestions_' . $course->id);
 
-        if (! $correctQuestionsData) {
+        if (!$correctQuestionsData) {
             return Redirect::route('course.review.generate', $course)
                 ->with('error', 'Review quiz session expired. Please try again.');
         }
@@ -147,7 +146,7 @@ final class CourseReviewController extends Controller
                 ]);
 
                 foreach ($submittedAnswers as $questionId => $userAnswer) {
-                    if (! $correctQuestions->has($questionId)) {
+                    if (!$correctQuestions->has($questionId)) {
                         continue;
                     }
 
@@ -158,16 +157,16 @@ final class CourseReviewController extends Controller
                         ? (json_decode($question->options, true) ?? [])
                         : ($question->options ?? []);
 
+
                     $isCorrect = false;
                     $correctAnswer = $question->correct_answer ?? null;
 
-                    // TODO: Refactor the grading logic to Service/Trait later
                     switch ($question->type ?? 'multiple_choice') {
                         case 'multiple_choice':
                         case 'fill_blank':
                         case 'true_false':
                             if (is_string($userAnswer) && is_string($correctAnswer)) {
-                                $isCorrect = mb_strtolower(mb_trim($userAnswer)) === mb_strtolower(mb_trim($correctAnswer));
+                                $isCorrect = strtolower(trim($userAnswer)) === strtolower(trim($correctAnswer));
                             }
                             break;
                     }
@@ -201,9 +200,8 @@ final class CourseReviewController extends Controller
                 $attempt->score = $score;
                 $attempt->save();
             });
-        } catch (Exception $e) {
-            Log::error('CourseReviewSubmit: Failed to save attempt.', ['error' => $e->getMessage()]);
-
+        } catch (\Exception $e) {
+            Log::error("CourseReviewSubmit: Failed to save attempt.", ['error' => $e->getMessage()]);
             return Redirect::route('course.review.generate', $course)
                 ->with('error', 'An error occurred saving your review attempt.');
         }
@@ -213,7 +211,7 @@ final class CourseReviewController extends Controller
             if ($result['is_correct']) {
                 continue;
             }
-            if (! $result['lesson_id']) {
+            if (!$result['lesson_id']) {
                 continue;
             }
             if (isset($lessonsToReviewDeeply[$result['lesson_id']])) {
@@ -225,7 +223,7 @@ final class CourseReviewController extends Controller
                     'id' => $lessonModel->id,
                     'title' => $lessonModel->title,
                     'url' => route('lessons.show', ['course' => $course->slug, 'lesson' => $lessonModel->slug]),
-                    'external_resources' => $lessonModel->externalResources->map(fn ($res) => $res->only('title', 'url', 'type', 'description'))->toArray(),
+                    'external_resources' => $lessonModel->externalResources->map(fn($res) => $res->only('title', 'url', 'type', 'description'))->toArray(),
                 ];
             }
         }
@@ -234,7 +232,7 @@ final class CourseReviewController extends Controller
             'quiz' => ['id' => $attempt->quiz_id, 'title' => $course->finalReviewQuiz?->title ?? "{$course->title} - Final Review"],
             'attempt' => $attempt,
             'results' => $resultsData,
-            'reviewSuggestions' => [], // TODO: Legacy, not used here
+            'reviewSuggestions' => [],
             'deepReviewSuggestions' => array_values($lessonsToReviewDeeply),
         ]);
     }

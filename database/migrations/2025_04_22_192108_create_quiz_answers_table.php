@@ -17,7 +17,6 @@ return new class extends Migration
             $table->id();
             $table->foreignId('quiz_attempt_id')->constrained()->onDelete('cascade');
             $table->foreignId('question_id')->constrained()->onDelete('cascade');
-            // Store the user's selected option ID (e.g., "a", "b")
             $table->string('user_answer')->nullable();
             $table->boolean('is_correct')->nullable()->comment('Graded result');
             $table->timestamps();

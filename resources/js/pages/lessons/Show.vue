@@ -1,84 +1,223 @@
 <script setup lang="ts">
-import { Head, Link, usePage } from '@inertiajs/vue3';
-import { computed } from 'vue';
+import AppLayout from '@/layouts/app/AppSidebarLayout.vue';
+import { Head, Link, router, usePage } from '@inertiajs/vue3';
+import loader from '@monaco-editor/loader';
+import { computed, onBeforeUnmount, onMounted, ref, shallowRef } from 'vue';
 
-defineProps({
+const props = defineProps({
     lesson: Object,
     course: Object,
 });
 
+defineOptions({ layout: AppLayout });
+
 const page = usePage();
 const successMessage = computed(() => page.props.flash?.success);
 
+const editorContainer = ref(null);
+const editorInstance = shallowRef(null);
+const editorCode = ref(props.lesson.initial_code || '');
+
+onMounted(() => {
+    // Initialize Monaco Editor when component mounts
+    loader
+        .init()
+        .then((monaco) => {
+            if (editorContainer.value) {
+                const editor = monaco.editor.create(editorContainer.value, {
+                    value: editorCode.value,
+                    language: 'javascript',
+                    theme: 'vs-dark',
+                    automaticLayout: true,
+                    minimap: { enabled: false },
+                    fontSize: 14,
+                    tabSize: 2,
+                });
+
+                editor.onDidChangeModelContent(() => {
+                    editorCode.value = editor.getValue();
+                });
+
+                editorInstance.value = editor;
+            }
+        })
+        .catch((error) => console.error('Monaco Editor loading failed:', error));
+});
+
+// Clean up editor instance when component unmounts
+onBeforeUnmount(() => {
+    editorInstance.value?.dispose();
+});
+
+const terminalOutput = ref('');
+const terminalError = ref('');
+const isExecuting = ref(false);
+const checkResult = ref(null);
+
+const runCode = () => {
+    if (isExecuting.value) return;
+
+    isExecuting.value = true;
+    terminalOutput.value = '';
+    terminalError.value = '';
+    checkResult.value = null;
+    const codeToRun = editorCode.value;
+
+    const originalConsoleLog = console.log;
+    let capturedOutput = '';
+
+    console.log = (...args) => {
+        capturedOutput +=
+            args
+                .map((arg) => {
+                    if (typeof arg === 'object' && arg !== null) {
+                        try {
+                            return JSON.stringify(arg);
+                        } catch (e) {
+                            console.error(e);
+                            return 'Unserializable Object';
+                        }
+                    }
+                    return String(arg);
+                })
+                .join(' ') + '\n';
+    };
+
+    try {
+        new Function(codeToRun)();
+
+        terminalOutput.value = capturedOutput.trim();
+
+        if (props.lesson.expected_output !== null && props.lesson.expected_output !== undefined) {
+            if (terminalOutput.value.trim() === props.lesson.expected_output.trim()) {
+                checkResult.value = 'correct';
+                // Check if lesson is NOT already completed before sending request
+                if (!props.lesson.is_completed) {
+                    console.log('Code correct, marking lesson complete...');
+                    router.post(
+                        route('lessons.complete', { lesson: props.lesson.id }),
+                        {},
+                        {
+                            preserveScroll: true,
+                            onSuccess: () => {
+                                console.log('Lesson marked complete successfully via Inertia POST.');
+                            },
+                            onError: (errors) => {
+                                console.error('Error marking lesson complete:', errors);
+                                alert('Could not mark lesson as complete. Please try running the code again or contact support.');
+                            },
+                        },
+                    );
+                }
+            } else {
+                checkResult.value = 'incorrect';
+            }
+        }
+    } catch (error) {
+        console.error('Execution Error:', error);
+        terminalError.value = error.toString();
+        checkResult.value = 'error';
+    } finally {
+        // Restore original console.log
+        console.log = originalConsoleLog;
+        isExecuting.value = false;
+    }
+};
+
+const userStyle = computed(() => page.props.auth.user?.preferred_learning_style || 'reading');
 </script>
 
 <template>
     <Head :title="lesson.title" />
 
-    <div v-if="successMessage" class="mb-4 p-4 bg-green-100 border border-green-400 text-green-700 rounded">
+    <div v-if="successMessage" class="fixed top-4 right-4 z-50 mb-4 rounded border border-green-400 bg-green-100 p-4 text-green-700 shadow-lg">
         {{ successMessage }}
     </div>
 
     <div class="py-12">
         <div class="mx-auto sm:px-6 lg:px-8">
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-
-                <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
-                    <div class="p-6 text-gray-900 dark:text-gray-100">
+            <div class="grid grid-cols-1 gap-6 lg:grid-cols-2">
+                <!-- Left Pane: Lesson Content & Assignment -->
+                <div class="overflow-hidden bg-white shadow-sm sm:rounded-lg dark:bg-gray-800">
+                    <div class="flex h-full flex-col p-6 text-gray-900 dark:text-gray-100">
+                        <!-- Breadcrumb/Back Link -->
                         <div class="mb-4">
                             <Link :href="route('courses.show', { course: course.slug })" class="text-blue-600 hover:underline dark:text-blue-400">
                                 « Back to {{ course.title }}
                             </Link>
                         </div>
 
-                        <h2 class="text-3xl font-semibold mb-4">{{ lesson.title }}</h2>
+                        <h2 class="mb-4 text-3xl font-semibold">{{ lesson.title }}</h2>
 
-                        <div class="prose dark:prose-invert max-w-none" v-html="lesson.content"></div>
+                        <!-- Lesson Content -->
+                        <!-- Video Content (if preferred visual AND video exists) -->
+                        <div v-if="userStyle === 'visual' && lesson.video_embed_html" class="mb-6">
+                            <h3 class="mb-2 text-lg font-semibold text-gray-800 dark:text-gray-200">Video Explanation:</h3>
+                            <div class="aspect-w-16 aspect-h-9 overflow-hidden rounded-md shadow-lg" v-html="lesson.video_embed_html"></div>
+                        </div>
 
-                        <div class="mt-8 border-t pt-6">
-                            <!-- Show completed message -->
-                            <div v-if="lesson.is_completed" class="flex items-center p-3 bg-green-100 dark:bg-green-900/30 border border-green-300 dark:border-green-700 rounded-md text-green-700 dark:text-green-300 font-semibold">
-                                <svg class="w-6 h-6 mr-2 fill-current" viewBox="0 0 20 20"><path d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"></path></svg>
-                                <span>Lesson Completed!</span>
-                            </div>
-                            <!-- Show button if not completed -->
-                            <Link v-else
-                                  :href="route('lessons.complete', { lesson: lesson.id })"
-                                  method="post"
-                                  as="button"
-                                  type="button"
-                                  preserve-scroll
-                                  class="inline-flex items-center px-4 py-2 bg-blue-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-blue-700 active:bg-blue-800 focus:outline-none focus:border-blue-900 focus:ring ring-blue-300 disabled:opacity-25 transition ease-in-out duration-150"
-                            >
-                                Mark as Complete
-                            </Link>
+                        <div class="prose dark:prose-invert mb-6 max-w-none" v-html="lesson.content"></div>
+
+                        <!-- Video Content (if style is NOT visual-first AND video exists) -->
+                        <div v-if="userStyle !== 'visual' && lesson.video_embed_html" class="mt-6 border-t pt-6 dark:border-gray-700">
+                            <h3 class="mb-2 text-lg font-semibold text-gray-800 dark:text-gray-200">Video Explanation (Optional):</h3>
+                            <div class="aspect-w-16 aspect-h-9 overflow-hidden rounded-md shadow-lg" v-html="lesson.video_embed_html"></div>
+                        </div>
+
+                        <!-- Assignment Section -->
+                        <div v-if="lesson.assignment" class="mt-auto border-t pt-6">
+                            <h3 class="mb-3 text-xl font-semibold">Assignment</h3>
+                            <div class="prose dark:prose-invert max-w-none text-sm" v-html="lesson.assignment"></div>
                         </div>
                     </div>
                 </div>
 
-                        <div class="mt-8 border-t pt-4">
-                            <button disabled class="bg-gray-400 text-white font-bold py-2 px-4 rounded opacity-50 cursor-not-allowed">
-                                Mark as Complete (Coming Soon)
-                            </button>
+                <!-- Right Pane: Editor, Terminal, Actions -->
+                <div class="flex flex-col overflow-hidden bg-gray-900 text-gray-100 shadow-sm sm:rounded-lg" style="height: 75vh">
+                    <!-- Editor Area -->
+                    <div ref="editorContainer" class="h-1/2 flex-grow">
+                        <!-- Monaco Editor will be mounted here -->
+                    </div>
+
+                    <!-- Action Bar -->
+                    <div class="flex flex-shrink-0 items-center justify-between border-t border-gray-700 px-4 py-2">
+                        <button
+                            @click="runCode"
+                            :disabled="isExecuting"
+                            class="rounded bg-blue-600 px-4 py-1 text-sm font-medium hover:bg-blue-700 disabled:opacity-50"
+                        >
+                            <span v-if="isExecuting">Running...</span>
+                            <span v-else>Run Code</span>
+                        </button>
+                        <div
+                            v-if="lesson.is_completed"
+                            class="flex items-center rounded-md border border-green-700 bg-green-900/30 p-1 text-xs font-semibold text-green-300"
+                        >
+                            <svg class="mr-1 h-4 w-4 fill-current" viewBox="0 0 20 20">
+                                <path
+                                    d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                                ></path>
+                            </svg>
+                            <span>Completed</span>
                         </div>
                     </div>
-                </div>
 
-                <!-- Right Pane: Placeholder for Code Editor/Terminal -->
-                <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
-                    <div class="p-6 text-gray-900 dark:text-gray-100">
-                        <h3 class="text-xl font-semibold mb-4">Code Area</h3>
-                        <div class="bg-gray-100 dark:bg-gray-900 p-4 rounded h-64 flex items-center justify-center">
-                            <p class="text-gray-500">Code Editor & Terminal will appear here.</p>
-                        </div>
-                        <!-- Placeholder for Assignment Text -->
-                        <div class="mt-4">
-                            <h4 class="font-semibold">Assignment:</h4>
-                            <p class="text-gray-600 dark:text-gray-400 italic">Assignment details will appear here.</p>
-                        </div>
+                    <!-- Terminal Output Area -->
+                    <div class="h-1/3 flex-shrink-0 overflow-auto border-t border-gray-700 bg-black p-3 font-mono text-sm">
+                        <div v-if="checkResult === 'correct'" class="mb-2 text-green-400">✓ Output matches expected result.</div>
+                        <div v-if="checkResult === 'incorrect'" class="mb-2 text-yellow-400">! Output does not match expected result.</div>
+                        <div v-if="checkResult === 'error'" class="mb-2 text-red-400">! Code execution failed.</div>
+
+                        <pre v-if="terminalOutput" class="whitespace-pre-wrap text-gray-200">{{ terminalOutput }}</pre>
+                        <pre v-if="terminalError" class="whitespace-pre-wrap text-red-400">{{ terminalError }}</pre>
+                        <span v-if="!terminalOutput && !terminalError && !isExecuting && checkResult === null" class="text-gray-500"
+                            >Output will appear here...</span
+                        >
                     </div>
                 </div>
             </div>
+        </div>
+    </div>
 </template>
 
 <style scoped>
@@ -95,5 +234,10 @@ const successMessage = computed(() => page.props.flash?.success);
 }
 .prose p {
     margin-bottom: 1em;
+}
+
+[ref='editorContainer'] {
+    min-height: 200px;
+    height: 100%;
 }
 </style>

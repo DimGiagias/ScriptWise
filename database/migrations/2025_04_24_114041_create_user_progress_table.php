@@ -15,13 +15,12 @@ return new class extends Migration
     {
         Schema::create('user_progress', function (Blueprint $table) {
             $table->id();
-            // Foreign keys linking to users and lessons
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->foreignId('lesson_id')->constrained()->onDelete('cascade');
             $table->timestamp('completed_at')->useCurrent(); // Record when completed
             $table->timestamps();
 
-            // IMPORTANT: A user can complete a specific lesson only once
+            // A user can complete a specific lesson only once
             $table->unique(['user_id', 'lesson_id']);
         });
     }

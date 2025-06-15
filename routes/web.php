@@ -15,8 +15,13 @@ use App\Http\Controllers\UserStatsController;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware(['auth', 'verified'])->group(function (): void {
-    Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
+    Route::get('/', [DashboardController::class, 'index'])->name('home');
     Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard');
+
+    Route::get('/courses', [CourseController::class, 'index'])->name('courses.index');
+    Route::get('/courses/{course}', [CourseController::class, 'show'])->name('courses.show');
+
+    Route::get('/courses/{course}/lessons/{lesson}', [LessonController::class, 'show'])->name('lessons.show');
 
     Route::get('/quizzes/{quiz}', [QuizController::class, 'show'])->name('quizzes.show');
     Route::post('/quizzes/{quiz}/submit', [QuizController::class, 'submit'])->name('quizzes.submit');
@@ -35,11 +40,6 @@ Route::middleware(['auth', 'verified'])->group(function (): void {
 
     Route::get('/my-stats', [UserStatsController::class, 'show'])->name('my-stats.show');
 });
-
-Route::get('/courses', [CourseController::class, 'index'])->name('courses.index');
-Route::get('/courses/{course}', [CourseController::class, 'show'])->name('courses.show');
-
-Route::get('/courses/{course}/lessons/{lesson}', [LessonController::class, 'show'])->name('lessons.show');
 
 require __DIR__.'/settings.php';
 require __DIR__.'/auth.php';

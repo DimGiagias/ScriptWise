@@ -29,7 +29,7 @@ final class ExternalResourceSeeder extends Seeder
             ExternalResource::create([
                 'lesson_id' => $lessonDeclare->id,
                 'title' => 'Understanding var, let, and const in JavaScript (Video)',
-                'url' => 'https://www.youtube.com/watch?v=s-hLgT_t3uA', // Example video
+                'url' => 'https://www.youtube.com/watch?v=s-hLgT_t3uA',
                 'type' => 'video',
                 'description' => 'A video explaining the differences and use cases for variable declarations.',
             ]);
@@ -44,6 +44,5 @@ final class ExternalResourceSeeder extends Seeder
                 'type' => 'documentation',
             ]);
         }
-        // Add more resources for other lessons...
     }
 }

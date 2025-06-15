@@ -204,7 +204,3 @@ const quizDescription = computed(() => {
         </div>
     </AppLayout>
 </template>
-
-<style scoped>
-/* Add any specific styles if needed */
-</style>
